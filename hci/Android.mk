@@ -21,10 +21,6 @@ LOCAL_SRC_FILES := \
     src/packet_fragmenter.c \
     src/vendor.c
 
-ifeq ($(QCOM_BT_USE_SMD_TTY),true)
-LOCAL_CFLAGS += -DQCOM_WCN_SSR
-endif
-
 LOCAL_C_INCLUDES += \
     $(LOCAL_PATH)/include \
     $(LOCAL_PATH)/.. \
@@ -37,11 +33,7 @@ LOCAL_C_INCLUDES += \
 
 LOCAL_MODULE := libbt-hci
 
-ifeq ($(BLUETOOTH_HCI_USE_MCT),true)
-LOCAL_CFLAGS += -DHCI_USE_MCT
-endif
-
-ifeq ($(TARGET_BUILD_VARIANT),eng)
+ifeq ($(TARGET_BUILD_VARIANT), eng)
     LOCAL_CFLAGS += -DBTSNOOP_DEFAULT=TRUE
 endif
 
