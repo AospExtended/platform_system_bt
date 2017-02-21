@@ -31,7 +31,6 @@
 #include "btm_api.h"
 #include "btm_ble_api.h"
 #include "btm_int.h"
-#include "device/include/interop.h"
 #include "osi/include/log.h"
 #include "srvc_api.h"
 #include "utl.h"
