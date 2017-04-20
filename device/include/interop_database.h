@@ -137,6 +137,9 @@ static const interop_addr_entry_t interop_addr_database[] = {
 
   //M12
   {{{0x00, 0x08, 0x8a,      0,0,0}}, 3, INTEROP_DISABLE_CODEC_NEGOTIATION},
+
+  //Bose Mini II sound link
+  {{{0x04, 0x52, 0xc7,      0,0,0}}, 3, INTEROP_DELAY_SCO_FOR_MT_CALL},
 };
 
 typedef struct {
