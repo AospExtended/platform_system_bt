@@ -115,6 +115,12 @@ typedef enum {
   // leading them to go in bad state. So for better interoperability respond with PBAP 1.1
   // as supported version.
   INTEROP_ADV_PBAP_VER_1_1,
+
+  // Some remotes are taking too long to respond for codec negotiation.
+  // Disable codec negotiation for such remotes and directly initiate
+  // SCO Connection.
+  INTEROP_DISABLE_CODEC_NEGOTIATION,
+
 } interop_feature_t;
 
 // Check if a given |addr| matches a known interoperability workaround as identified
