@@ -183,6 +183,9 @@ static const interop_name_entry_t interop_name_database[] = {
 
   // Land Rover Carkit
   {"Discovery Sport", 15, INTEROP_ADV_PBAP_VER_1_1},
+
+  //JABRA EASYGO
+  {"JABRA EASYGO", 12, INTEROP_DISABLE_CODEC_NEGOTIATION},
 };
 
 typedef struct {
