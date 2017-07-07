@@ -39,6 +39,7 @@
 #include <cutils/properties.h>
 #include <unistd.h>
 #include "device/include/interop.h"
+#include "btif/include/btif_storage.h"
 
 /*****************************************************************************
 **  Constants
@@ -1008,6 +1009,10 @@ void bta_ag_at_hfp_cback(tBTA_AG_SCB *p_scb, UINT16 cmd, UINT8 arg_type,
     UINT32          bia_masked_out;
     tBTA_AG_FEAT  features;
     char value[PROPERTY_VALUE_MAX];
+    bt_bdname_t bdname;
+    bt_bdaddr_t remote_bdaddr;
+    bt_property_t prop_name;
+    bdcpy(remote_bdaddr.address, p_scb->peer_addr);
 #if (BTM_WBS_INCLUDED == TRUE )
     tBTA_AG_PEER_CODEC  codec_type, codec_sent;
 #endif
@@ -1260,8 +1265,18 @@ void bta_ag_at_hfp_cback(tBTA_AG_SCB *p_scb, UINT16 cmd, UINT8 arg_type,
                 }
              }
 
-            if (interop_match_addr(INTEROP_DISABLE_CODEC_NEGOTIATION,
-                (const bt_bdaddr_t*)p_scb->peer_addr))
+            BTIF_STORAGE_FILL_PROPERTY(&prop_name, BT_PROPERTY_BDNAME,
+                                   sizeof(bt_bdname_t), &bdname);
+            if (btif_storage_get_remote_device_property(&remote_bdaddr,
+                                                  &prop_name) != BT_STATUS_SUCCESS)
+            {
+               APPL_TRACE_WARNING("%s:Fetching remote device name failed", __func__);
+            }
+
+            if ((interop_match_addr(INTEROP_DISABLE_CODEC_NEGOTIATION,
+                (const bt_bdaddr_t*)p_scb->peer_addr)) ||
+                (strlen((const char *)bdname.name) != 0 &&
+                interop_match_name(INTEROP_DISABLE_CODEC_NEGOTIATION, (const char *)bdname.name)))
             {
                 APPL_TRACE_IMP("%s disable codec negotiation for phone, remote" \
                                   "for blacklisted device", __func__);
