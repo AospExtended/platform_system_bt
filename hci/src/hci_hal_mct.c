@@ -32,6 +32,7 @@
 #include "vendor.h"
 
 #define HCI_HAL_SERIAL_BUFFER_SIZE 1026
+#define HCI_THREAD_PRIORITY -19
 
 #include <termios.h>
 #include <sys/ioctl.h>
@@ -137,7 +138,8 @@ static bool hal_open() {
   eager_reader_register(acl_stream, thread_get_reactor(thread), event_acl_stream_has_bytes, NULL);
 
 #endif
-
+    // Raise thread priorities to keep up with audio
+  thread_set_priority(thread, HCI_THREAD_PRIORITY);
   return true;
 
 error:;
