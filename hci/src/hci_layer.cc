@@ -442,7 +442,7 @@ static void hci_timeout_abort(void* unused_data) {
 
   // We shouldn't try to recover the stack from this command timeout.
   // If it's caused by a software bug, fix it. If it's a hardware bug, fix it.
-  abort();
+  exit(0);
 }
 
 static void command_timed_out_log_info(void* original_wait_entry) {
@@ -524,7 +524,7 @@ static void command_timed_out(void* original_wait_entry) {
   hci_timeout_abort_timer = alarm_new("hci.hci_timeout_aborter");
   if (!hci_timeout_abort_timer) {
     LOG_ERROR(LOG_TAG, "%s unable to create an abort timer.", __func__);
-    abort();
+    exit(0);
   }
   alarm_set(hci_timeout_abort_timer, COMMAND_TIMEOUT_RESTART_MS,
             hci_timeout_abort, nullptr);
