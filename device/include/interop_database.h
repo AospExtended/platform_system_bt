@@ -134,6 +134,12 @@ static const interop_addr_entry_t interop_addr_database[] = {
   {{{0x00, 0x00, 0x6a,      0,0,0}}, 3, INTEROP_ADV_PBAP_VER_1_1},
   {{{0x00, 0x00, 0x7f,      0,0,0}}, 3, INTEROP_ADV_PBAP_VER_1_1},
   {{{0x00, 0x01, 0x0a,      0,0,0}}, 3, INTEROP_ADV_PBAP_VER_1_1},
+
+  //M12
+  {{{0x00, 0x08, 0x8a,      0,0,0}}, 3, INTEROP_DISABLE_CODEC_NEGOTIATION},
+
+  //Bose Mini II sound link
+  {{{0x04, 0x52, 0xc7,      0,0,0}}, 3, INTEROP_DELAY_SCO_FOR_MT_CALL},
 };
 
 typedef struct {
@@ -177,6 +183,9 @@ static const interop_name_entry_t interop_name_database[] = {
 
   // Land Rover Carkit
   {"Discovery Sport", 15, INTEROP_ADV_PBAP_VER_1_1},
+
+  //JABRA EASYGO
+  {"JABRA EASYGO", 12, INTEROP_DISABLE_CODEC_NEGOTIATION},
 };
 
 typedef struct {
