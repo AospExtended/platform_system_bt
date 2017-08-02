@@ -169,13 +169,9 @@ static const char* dump_a2dp_ctrl_event(char event)
     }
 }
 
-static int calc_audiotime(struct a2dp_config cfg, int bytes)
+static int calc_audiotime(struct a2dp_config cfg, int bytes, int  bytes_per_sample)
 {
     int chan_count = popcount(cfg.channel_flags);
-    int bytes_per_sample = 4;
-
-    ASSERTC(cfg.format == AUDIO_FORMAT_PCM_8_24_BIT,
-            "unsupported sample sz", cfg.format);
 
     return (int)(((int64_t)bytes * (1000000 / (chan_count * bytes_per_sample))) / cfg.rate);
 }
@@ -186,6 +182,10 @@ static void ts_error_log(char *tag, int val, int buff_size, struct a2dp_config c
     static struct timespec prev = {0,0};
     unsigned long long now_us;
     unsigned long long diff_us;
+    // Due to larger format, the number of samples
+    // which we can fit in buffer is doubled
+    int double_buff_size = buff_size * 2;
+    int bytes_per_sample = 4;
 
     clock_gettime(CLOCK_MONOTONIC, &now);
 
@@ -193,7 +193,7 @@ static void ts_error_log(char *tag, int val, int buff_size, struct a2dp_config c
 
     diff_us = (now.tv_sec - prev.tv_sec) * USEC_PER_SEC + (now.tv_nsec - prev.tv_nsec)/1000;
     prev = now;
-    if(diff_us > (unsigned long long)(calc_audiotime (cfg, buff_size) + 10000L))
+    if(diff_us > (unsigned long long)(calc_audiotime (cfg, double_buff_size, bytes_per_sample) + 10000L))
     {
        DEBUG("[%s] ts %08lld, diff %08lld, val %d %d", tag, now_us, diff_us, val, buff_size);
     }
@@ -676,6 +676,8 @@ static ssize_t out_write(struct audio_stream_out *stream, const void* buffer,
     #ifdef BT_AUDIO_SYSTRACE_LOG
     char trace_buf[512];
     #endif
+    // output streams are now 8_24 format
+    int bytes_per_sample = 4;
 
     DEBUG("write %zu bytes (fd %d)", bytes, out->common.audio_fd);
 
@@ -762,7 +764,7 @@ finish: ;
 
     // If send didn't work out, sleep to emulate write delay.
     if (sent == -1) {
-        const int us_delay = calc_audiotime(out->common.cfg, bytes);
+        const int us_delay = calc_audiotime(out->common.cfg, bytes, bytes_per_sample);
         DEBUG("emulate a2dp write delay (%d us)", us_delay);
         usleep(us_delay);
     }
@@ -1206,6 +1208,8 @@ static ssize_t in_read(struct audio_stream_in *stream, void* buffer,
     struct a2dp_stream_in *in = (struct a2dp_stream_in *)stream;
     int read;
     int us_delay;
+    // input streams are still 16bit format
+    int bytes_per_sample = 2;
 
     DEBUG("read %zu bytes, state: %d", bytes, in->common.state);
 
@@ -1272,7 +1276,7 @@ static ssize_t in_read(struct audio_stream_in *stream, void* buffer,
 error:
     pthread_mutex_unlock(&in->common.lock);
     memset(buffer, 0, bytes);
-    us_delay = calc_audiotime(in->common.cfg, bytes);
+    us_delay = calc_audiotime(in->common.cfg, bytes, bytes_per_sample);
     DEBUG("emulate a2dp read delay (%d us)", us_delay);
 
     usleep(us_delay);
