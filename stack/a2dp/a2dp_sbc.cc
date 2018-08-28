@@ -56,7 +56,7 @@ typedef struct {
 /* SBC Source codec capabilities */
 static const tA2DP_SBC_CIE a2dp_sbc_source_caps = {
     (A2DP_SBC_IE_SAMP_FREQ_44),                         /* samp_freq */
-    (A2DP_SBC_IE_CH_MD_MONO | A2DP_SBC_IE_CH_MD_JOINT), /* ch_mode */
+    (A2DP_SBC_IE_CH_MD_MONO | A2DP_SBC_IE_CH_MD_JOINT | A2DP_SBC_IE_CH_MD_DUAL), /* ch_mode */
     (A2DP_SBC_IE_BLOCKS_16 | A2DP_SBC_IE_BLOCKS_12 | A2DP_SBC_IE_BLOCKS_8 |
      A2DP_SBC_IE_BLOCKS_4),            /* block_len */
     A2DP_SBC_IE_SUBBAND_8,             /* num_subbands */
@@ -83,7 +83,7 @@ static const tA2DP_SBC_CIE a2dp_sbc_sink_caps = {
 /* Default SBC codec configuration */
 const tA2DP_SBC_CIE a2dp_sbc_default_config = {
     A2DP_SBC_IE_SAMP_FREQ_44,          /* samp_freq */
-    A2DP_SBC_IE_CH_MD_JOINT,           /* ch_mode */
+    A2DP_SBC_IE_CH_MD_DUAL,           /* ch_mode */
     A2DP_SBC_IE_BLOCKS_16,             /* block_len */
     A2DP_SBC_IE_SUBBAND_8,             /* num_subbands */
     A2DP_SBC_IE_ALLOC_MD_L,            /* alloc_method */
@@ -976,6 +976,11 @@ static bool select_audio_bits_per_sample(
 //
 static bool select_best_channel_mode(uint8_t ch_mode, tA2DP_SBC_CIE* p_result,
                                      btav_a2dp_codec_config_t* p_codec_config) {
+  if (ch_mode & A2DP_SBC_IE_CH_MD_DUAL) {
+    p_result->ch_mode = A2DP_SBC_IE_CH_MD_DUAL;
+    p_codec_config->channel_mode = BTAV_A2DP_CODEC_CHANNEL_MODE_STEREO;
+    return true;
+  }
   if (ch_mode & A2DP_SBC_IE_CH_MD_JOINT) {
     p_result->ch_mode = A2DP_SBC_IE_CH_MD_JOINT;
     p_codec_config->channel_mode = BTAV_A2DP_CODEC_CHANNEL_MODE_STEREO;
@@ -983,11 +988,6 @@ static bool select_best_channel_mode(uint8_t ch_mode, tA2DP_SBC_CIE* p_result,
   }
   if (ch_mode & A2DP_SBC_IE_CH_MD_STEREO) {
     p_result->ch_mode = A2DP_SBC_IE_CH_MD_STEREO;
-    p_codec_config->channel_mode = BTAV_A2DP_CODEC_CHANNEL_MODE_STEREO;
-    return true;
-  }
-  if (ch_mode & A2DP_SBC_IE_CH_MD_DUAL) {
-    p_result->ch_mode = A2DP_SBC_IE_CH_MD_DUAL;
     p_codec_config->channel_mode = BTAV_A2DP_CODEC_CHANNEL_MODE_STEREO;
     return true;
   }
