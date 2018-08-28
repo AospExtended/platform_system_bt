@@ -39,7 +39,7 @@
 #define A2DP_SBC_ENCODER_INTERVAL_MS 20
 
 /* High quality quality setting @ 44.1 khz */
-#define A2DP_SBC_DEFAULT_BITRATE 328
+#define A2DP_SBC_DEFAULT_BITRATE 512
 
 #define A2DP_SBC_NON_EDR_MAX_RATE 229
 
