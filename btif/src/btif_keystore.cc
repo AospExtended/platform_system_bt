@@ -145,4 +145,8 @@ bool BtifKeystore::DoesKeyExist() {
   return keystore_client_->doesKeyExist(kKeyStore);
 }
 
+bool BtifKeystore::DoesKeyExist() {
+  return keystore_client_->doesKeyExist(kKeyStore);
+}
+
 }  // namespace bluetooth
