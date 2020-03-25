@@ -196,9 +196,7 @@ static BtifKeystore btif_keystore(new keystore::KeystoreClientImpl);
 static future_t* init(void) {
   std::unique_lock<std::recursive_mutex> lock(config_lock);
 
-  if (is_factory_reset() ||
-      (!btif_keystore.DoesKeyExist()))
-    delete_config_files();
+  if (is_factory_reset()) delete_config_files();
 
   std::string file_source;
 
