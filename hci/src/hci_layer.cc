@@ -456,6 +456,12 @@ static void hci_root_inflamed_abort(uint8_t error_code,
              << ", vendor_error_code = " << std::to_string(vendor_error_code);
 }
 
+static void hci_root_inflamed_abort(uint8_t error_code,
+                                    uint8_t vendor_error_code) {
+  LOG(FATAL) << __func__ << ": error_code = " << std::to_string(error_code)
+             << ", vendor_error_code = " << std::to_string(vendor_error_code);
+}
+
 static void command_timed_out_log_info(void* original_wait_entry) {
   LOG_ERROR(LOG_TAG, "%s: %d commands pending response", __func__,
             get_num_waiting_commands());
